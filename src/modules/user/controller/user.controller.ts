@@ -27,32 +27,6 @@ export const getAll = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
-export const depositCurrency = async (req: Request, res: Response, next: NextFunction) => {
-    const deposit = req.body;
-    const userId = req.params.id;
-    const userService = container.resolve(UserService);
-
-    try {
-        const user = await userService.depositCurrency(Number(userId), deposit.amount, deposit.currencyId);
-        res.json(user);
-    } catch(ex: unknown) {
-        next(ex);
-    }
-};
-
-export const withdrawCurrency = async (req: Request, res: Response, next: NextFunction) => {
-    const withdraw = req.body;
-    const userId = req.params.id;
-    const userService = container.resolve(UserService);
-
-    try {
-        const user = await userService.withdrawCurrency(Number(userId), withdraw.amount, withdraw.currencyId);
-        res.json(user);
-    } catch(ex: unknown) {
-        next(ex);
-    }
-};
-
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const dto: UserDTO = req.body;
     const userService = container.resolve(UserService);

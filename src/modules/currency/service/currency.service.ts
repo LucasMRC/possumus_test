@@ -7,6 +7,9 @@ import {
 } from '@modules/currency';
 import { CurrencyRepository } from '@modules/currency/repository/currency.repository';
 
+// Modules
+import { ErrorWithStatus } from '@src/utils';
+
 @injectable()
 export class CurrencyService {
 
@@ -16,8 +19,12 @@ export class CurrencyService {
         this.currencyRepository = currencyRepository;
     }
 
-    getOne = async (id: number): Promise<Currency | undefined> => {
+    getById = async (id: number): Promise<Currency> => {
         return await this.findByProperty('id', id);
+    };
+
+    getByName = async (name: string): Promise<Currency> => {
+        return await this.findByProperty('name', name);
     };
 
     getAll = async (): Promise<Currency[]> => {
@@ -30,7 +37,9 @@ export class CurrencyService {
         return await this.currencyRepository.create(newCurrency);
     };
 
-    private findByProperty = async (property: string, value: unknown): Promise<Currency | undefined> => {
-        return await this.currencyRepository.findOne({ property, value });
+    private findByProperty = async (property: string, value: unknown): Promise<Currency> => {
+        const currency = await this.currencyRepository.findOne({ property, value });
+        if (!currency) throw new ErrorWithStatus(404, `Currency with ${property} ${value} not found`);
+        else return currency;
     };
 }

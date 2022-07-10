@@ -1,19 +1,21 @@
 // Config
-import { DB } from '..';
+import { DB } from '@config/database';
 
 // Modules
-import { Balance, User } from '../../../src/modules/user';
-import { Currency } from '../../../src/modules/currency';
+import { User } from '@modules/user';
+import { Currency } from '@modules/currency';
+import { Balance, Wallet } from '@modules/wallet';
 
 // Utils
-import { formatDate, ErrorWithStatus } from '../../../src/utils';
+import { formatDate } from '@utils/formatters';
+import { ErrorWithStatus } from '@utils/errors';
 
-/* == Types & Interfaces == */
+// Types & Interfaces
 export type FindMethod<T> = (options: FindOneOptions) => Promise<T | undefined>;
 export type CreateMethod<T> = (entity: T) => Promise<T>;
-export type DepositMethod = (userId: number, amount: number, currency: Currency) => Promise<User>;
-export type WithdrawMethod = (userId: number, amount: number, currency: Currency) => Promise<User>;
-export type AddBalanceMethod = (userId: number, balance: Balance) => Promise<User>;
+export type DepositMethod = (walletId: number, amount: number, currency: Currency) => Promise<Wallet>;
+export type WithdrawMethod = (walletId: number, amount: number, currency: Currency) => Promise<Wallet>;
+export type AddBalanceMethod = (walletId: number, balance: Balance) => Promise<Wallet>;
 export type FindAllMethod<T> = () => Promise<T[]>;
 
 export interface FindOneOptions {
@@ -49,52 +51,6 @@ export const findAllUsers: FindAllMethod<User> = (): Promise<User[]> => {
     });
 };
 
-export const deposit: DepositMethod = (userId: number, amount: number, currency: Currency): Promise<User> => {
-    return new Promise((resolve, reject) => {
-        const user = DB.users.entities.find(u => u.id === userId);
-        setTimeout(() => {
-            if (!user) reject(new ErrorWithStatus(404, 'User not found'));
-            else {
-                const currencyIndex = user.balance.findIndex(b => b.currency.id === currency.id);
-                if (currencyIndex === -1) reject(new ErrorWithStatus(404, 'Balance not found'));
-                else {
-                    user.balance[currencyIndex].deposits.push({
-                        id: user.balance[currencyIndex].deposits.length + 1,
-                        amount,
-                        date: formatDate(new Date()),
-                        initialAmount: user.balance[currencyIndex].amount,
-                        finalAmount: user.balance[currencyIndex].amount + amount
-                    });
-                    user.balance[currencyIndex].amount += amount;
-                    resolve(user);
-                }}
-        }, 1500);
-    });
-};
-
-export const withdraw: WithdrawMethod = (userId: number, amount: number, currency: Currency): Promise<User> => {
-    return new Promise((resolve, reject) => {
-        const user = DB.users.entities.find(u => u.id === userId);
-        setTimeout(() => {
-            if (!user) reject(new ErrorWithStatus(404, 'User not found'));
-            else {
-                const currencyIndex = user.balance.findIndex(b => b.currency.id === currency.id);
-                if (currencyIndex === -1) reject(new ErrorWithStatus(404, 'Balance not found'));
-                else {
-                    user.balance[currencyIndex].withdrawal.push({
-                        id: user.balance[currencyIndex].withdrawal.length + 1,
-                        amount,
-                        date: formatDate(new Date()),
-                        initialAmount: user.balance[currencyIndex].amount,
-                        finalAmount: user.balance[currencyIndex].amount - amount
-                    });
-                    user.balance[currencyIndex].amount -= amount;
-                }
-                resolve(user);
-            }
-        });
-    });
-};
 
 export const createUser: CreateMethod<User> = (user: User): Promise<User> => {
     return new Promise((resolve, reject) => {
@@ -102,23 +58,9 @@ export const createUser: CreateMethod<User> = (user: User): Promise<User> => {
         if (userIndex !== -1) reject(new ErrorWithStatus(409, 'User already exists'));
         else {
             user.id = DB.users.entities.length + 1;
-            user.balance = [];
             DB.users.entities.push(user);
             resolve(user);
         }
-    });
-};
-
-export const addBalance = (userId: number, balance: Balance): Promise<User> => {
-    return new Promise((resolve, reject) => {
-        const user = DB.users.entities.find(u => u.id === userId);
-        setTimeout(() => {
-            if (!user) reject(new ErrorWithStatus(404, 'User not found'));
-            else {
-                user.balance.push(balance);
-                resolve(user);
-            }
-        });
     });
 };
 
@@ -161,5 +103,107 @@ export const createCurrency: CreateMethod<Currency> = (currency: Currency): Prom
             DB.currencies.entities.push(currency);
             resolve(currency);
         }
+    });
+};
+
+/* ================================================================================================================ */
+/* ================================================ WALLET METHODS ================================================ */
+/* ================================================================================================================ */
+
+export const findOneWallet: FindMethod<Wallet> = (options: FindOneOptions): Promise<Wallet | undefined> => {
+    return new Promise((resolve, reject) => {
+        const wallet = DB.wallets.entities.find(w => {
+            switch (options.property) {
+                case 'id': return w.id === options.value;
+                case 'userId': return w.user.id === options.value;
+                case 'userName': return w.user.name === options.value;
+                default: reject(new ErrorWithStatus(400, 'Invalid property'));
+            }
+        });
+        setTimeout(() => {
+            if (!wallet) resolve(undefined);
+            else resolve(wallet);
+        }, 1500);
+    });
+};
+
+export const findAllWallets: FindAllMethod<Wallet> = (): Promise<Wallet[]> => {
+    return new Promise((resolve, _reject) => {
+        setTimeout(() => {
+            resolve(DB.wallets.entities);
+        }, 1500);
+    });
+};
+
+
+export const createWallet: CreateMethod<Wallet> = (wallet: Wallet): Promise<Wallet> => {
+    return new Promise((resolve, reject) => {
+        const walletIndex = DB.wallets.entities.findIndex(w => w.user.id === wallet.user.id);
+        if (walletIndex !== -1) reject(new ErrorWithStatus(409, 'There\'s already a Wallet for that user'));
+        else {
+            wallet.id = DB.wallets.entities.length + 1;
+            DB.wallets.entities.push(wallet);
+            resolve(wallet);
+        }
+    });
+};
+
+export const deposit: DepositMethod = (walletId: number, amount: number, currency: Currency): Promise<Wallet> => {
+    return new Promise((resolve, reject) => {
+        const wallet = DB.wallets.entities.find(w => w.id === walletId);
+        setTimeout(() => {
+            if (!wallet) reject(new ErrorWithStatus(404, 'Wallet not found'));
+            else {
+                const currencyIndex = wallet.balances.findIndex(b => b.currency.id === currency.id);
+                if (currencyIndex === -1) reject(new ErrorWithStatus(404, 'Balance not found'));
+                else {
+                    wallet.balances[currencyIndex].deposits.push({
+                        id: wallet.balances[currencyIndex].deposits.length + 1,
+                        amount,
+                        date: formatDate(new Date()),
+                        initialAmount: wallet.balances[currencyIndex].amount,
+                        finalAmount: wallet.balances[currencyIndex].amount + amount
+                    });
+                    wallet.balances[currencyIndex].amount += amount;
+                    resolve(wallet);
+                }}
+        }, 1500);
+    });
+};
+
+export const withdraw: WithdrawMethod = (walletId: number, amount: number, currency: Currency): Promise<Wallet> => {
+    return new Promise((resolve, reject) => {
+        const wallet = DB.wallets.entities.find(w => w.id === walletId);
+        setTimeout(() => {
+            if (!wallet) reject(new ErrorWithStatus(404, 'wallet not found'));
+            else {
+                const currencyIndex = wallet.balances.findIndex(b => b.currency.id === currency.id);
+                if (currencyIndex === -1) reject(new ErrorWithStatus(404, 'Balance not found'));
+                else {
+                    wallet.balances[currencyIndex].withdrawal.push({
+                        id: wallet.balances[currencyIndex].withdrawal.length + 1,
+                        amount,
+                        date: formatDate(new Date()),
+                        initialAmount: wallet.balances[currencyIndex].amount,
+                        finalAmount: wallet.balances[currencyIndex].amount - amount
+                    });
+                    wallet.balances[currencyIndex].amount -= amount;
+                }
+                resolve(wallet);
+            }
+        });
+    });
+};
+
+export const addBalance = (walletId: number, balance: Balance): Promise<Wallet> => {
+    return new Promise((resolve, reject) => {
+        const wallet = DB.wallets.entities.find(w => w.id === walletId);
+        setTimeout(() => {
+            if (!wallet) reject(new ErrorWithStatus(404, 'wWllet not found'));
+            else {
+                wallet.balances.push(balance);
+                resolve(wallet);
+            }
+        });
     });
 };

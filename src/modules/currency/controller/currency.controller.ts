@@ -9,7 +9,7 @@ export const getCurrency = async (req: Request, res: Response, next: NextFunctio
     const currencyService = container.resolve(CurrencyService);
 
     try {
-        const currency = await currencyService.getOne(Number(currencyId));
+        const currency = await currencyService.getById(Number(currencyId));
         res.json(currency);
     } catch(ex: unknown) {
         next(ex);
