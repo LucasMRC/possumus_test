@@ -4,12 +4,15 @@ import { Router } from 'express';
 import {
     getUser,
     createUser,
-    getAll
+    getAll,
+    getUsersWallet
 } from '@modules/user';
 
 const UserRoutes = Router();
 
 UserRoutes.get('/:id', getUser);
+
+UserRoutes.get('/:id/wallet', getUsersWallet);
 
 UserRoutes.get('/', getAll);
 

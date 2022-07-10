@@ -38,3 +38,15 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
         next(ex);
     }
 };
+
+export const getUsersWallet = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.id;
+    const userService = container.resolve(UserService);
+
+    try {
+        const wallet = await userService.getUsersWallet(Number(userId));
+        res.json(wallet);
+    } catch(ex: unknown) {
+        next(ex);
+    }
+};

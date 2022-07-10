@@ -7,6 +7,7 @@ import { ErrorWithStatus } from '@utils/errors';
 import { User, UserDTO } from '@modules/user';
 import { CurrencyService } from '@modules/currency';
 import { UserRepository } from '@modules/user/repository/user.repository';
+import { Wallet } from '@modules/wallet';
 
 @injectable()
 export class UserService {
@@ -22,9 +23,7 @@ export class UserService {
     }
 
     getUser = async (userId: number): Promise<User> => {
-        const user = await this.findById(userId);
-        if (!user) throw new ErrorWithStatus(404, `User with id ${userId} not found`);
-        return user;
+        return await this.findById(userId);
     };
 
     getAll = async (): Promise<User[]> => {
@@ -36,7 +35,16 @@ export class UserService {
         return await this.userRepository.create(newUser);
     };
 
-    private findById = async (userId: number): Promise<User | undefined> => {
-        return await this.userRepository.findOne({ property: 'id', value: userId });
+    getUsersWallet = async (userId: number): Promise<Wallet> => {
+        await this.findById(userId);
+        const wallet = await this.userRepository.findWallet(userId);
+        if (!wallet) throw new ErrorWithStatus(404, `Wallet with userId ${userId} not found`);
+        return wallet;
+    };
+
+    private findById = async (userId: number): Promise<User> => {
+        const user = await this.userRepository.findOne({ property: 'id', value: userId });
+        if (!user) throw new ErrorWithStatus(404, `User with id ${userId} not found`);
+        return user;
     };
 }

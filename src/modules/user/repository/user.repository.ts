@@ -7,6 +7,7 @@ import { FindOneOptions } from '@config/database/methods';
 
 // Modules
 import { User } from '@modules/user';
+import { Wallet } from '@modules/wallet';
 
 // Set up database
 const DATABASE = process.env.NODE_ENV === 'testing'
@@ -26,6 +27,10 @@ export class UserRepository {
 
     create = async (user: User): Promise<User> => {
         return await DATABASE.users.create(user);
+    };
+
+    findWallet = async (userId: number): Promise<Wallet | undefined> => {
+        return await DATABASE.wallets.findOne({ property: 'userId', value: userId });
     };
 
 }
