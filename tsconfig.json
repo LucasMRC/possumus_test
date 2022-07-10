@@ -1,28 +1,29 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "module": "commonjs",
-    "rootDir": "./",
-    "moduleResolution": "node",
-    "baseUrl": ".",
+	"compilerOptions": {
+		"target": "es6",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"module": "commonjs",
+		"rootDir": "./",
+		"moduleResolution": "node",
+		"baseUrl": ".",
 		"paths": {
 			"@src/*": ["src/*"],
+			"@tests/*": ["tests/*"],
 			"@config/*": ["config/*"],
 			"@routes/*": ["src/routes/*"],
 			"@utils/*": ["src/utils/*"],
 			"@modules/*": ["src/modules/*"]
 		},
-    "sourceMap": true,
-    "outDir": "./.dist",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "skipLibCheck": true
-  },
-	"exclude": ["node_modules", "**/*.d.ts"],
-	"include": ["**/*.ts"]
+		"sourceMap": true,
+		"outDir": "./.dist",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"skipLibCheck": true
+	},
+	"exclude": ["node_modules"],
+	"include": ["**/*.ts", ".eslintrc.json"]
 }

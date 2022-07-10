@@ -1,0 +1,10 @@
+{
+    "moduleNameMapper": {
+        "@src/(.*)": "<rootDir>/.dist/src/$1",
+        "@modules/(.*)": "<rootDir>/.dist/src/modules/$1",
+        "@utils/(.*)": "<rootDir>/.dist/src/utils/$1",
+        "@routes/(.*)": "<rootDir>/.dist/src/routes/$1",
+        "@config/(.*)": "<rootDir>/.dist/config/$1",
+        "@tests/(.*)": "<rootDir>/.dist/tests/$1"
+    }
+}
