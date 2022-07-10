@@ -36,18 +36,14 @@ export const findOneUser: FindMethod<User> = (options: FindOneOptions): Promise<
                 default: reject(new ErrorWithStatus(400, 'Invalid property'));
             }
         });
-        setTimeout(() => {
-            if (!user) resolve(undefined);
-            else resolve(user);
-        }, 1500);
+        if (!user) resolve(undefined);
+        else resolve(user);
     });
 };
 
 export const findAllUsers: FindAllMethod<User> = (): Promise<User[]> => {
     return new Promise((resolve, _reject) => {
-        setTimeout(() => {
-            resolve(DB.users.entities);
-        }, 1500);
+        resolve(DB.users.entities);
     });
 };
 
@@ -77,18 +73,14 @@ export const findOneCurrency: FindMethod<Currency> = (options: FindOneOptions): 
                 default: reject(new ErrorWithStatus(400, 'Invalid property'));
             }
         });
-        setTimeout(() => {
-            if (!currency) resolve(undefined);
-            else resolve(currency);
-        }, 1500);
+        if (!currency) resolve(undefined);
+        else resolve(currency);
     });
 };
 
 export const findAllCurrencies: FindAllMethod<Currency> = (): Promise<Currency[]> => {
     return new Promise((resolve, _reject) => {
-        setTimeout(() => {
-            resolve(DB.currencies.entities);
-        }, 1500);
+        resolve(DB.currencies.entities);
     });
 };
 
@@ -120,18 +112,14 @@ export const findOneWallet: FindMethod<Wallet> = (options: FindOneOptions): Prom
                 default: reject(new ErrorWithStatus(400, 'Invalid property'));
             }
         });
-        setTimeout(() => {
-            if (!wallet) resolve(undefined);
-            else resolve(wallet);
-        }, 1500);
+        if (!wallet) resolve(undefined);
+        else resolve(wallet);
     });
 };
 
 export const findAllWallets: FindAllMethod<Wallet> = (): Promise<Wallet[]> => {
     return new Promise((resolve, _reject) => {
-        setTimeout(() => {
-            resolve(DB.wallets.entities);
-        }, 1500);
+        resolve(DB.wallets.entities);
     });
 };
 
@@ -139,7 +127,7 @@ export const findAllWallets: FindAllMethod<Wallet> = (): Promise<Wallet[]> => {
 export const createWallet: CreateMethod<Wallet> = (wallet: Wallet): Promise<Wallet> => {
     return new Promise((resolve, reject) => {
         const walletIndex = DB.wallets.entities.findIndex(w => w.user.id === wallet.user.id);
-        if (walletIndex !== -1) reject(new ErrorWithStatus(409, 'There\'s already a Wallet for that user'));
+        if (walletIndex !== -1) reject(new ErrorWithStatus(409, 'There\'s already a wallet for that user'));
         else {
             wallet.id = DB.wallets.entities.length + 1;
             DB.wallets.entities.push(wallet);
@@ -151,59 +139,53 @@ export const createWallet: CreateMethod<Wallet> = (wallet: Wallet): Promise<Wall
 export const deposit: DepositMethod = (walletId: number, amount: number, currency: Currency): Promise<Wallet> => {
     return new Promise((resolve, reject) => {
         const wallet = DB.wallets.entities.find(w => w.id === walletId);
-        setTimeout(() => {
-            if (!wallet) reject(new ErrorWithStatus(404, 'Wallet not found'));
+        if (!wallet) reject(new ErrorWithStatus(404, 'Wallet not found'));
+        else {
+            const currencyIndex = wallet.balances.findIndex(b => b.currency.id === currency.id);
+            if (currencyIndex === -1) reject(new ErrorWithStatus(404, 'Balance not found'));
             else {
-                const currencyIndex = wallet.balances.findIndex(b => b.currency.id === currency.id);
-                if (currencyIndex === -1) reject(new ErrorWithStatus(404, 'Balance not found'));
-                else {
-                    wallet.balances[currencyIndex].deposits.push({
-                        id: wallet.balances[currencyIndex].deposits.length + 1,
-                        amount,
-                        date: formatDate(new Date()),
-                        initialAmount: wallet.balances[currencyIndex].amount,
-                        finalAmount: wallet.balances[currencyIndex].amount + amount
-                    });
-                    wallet.balances[currencyIndex].amount += amount;
-                    resolve(wallet);
-                }}
-        }, 1500);
+                wallet.balances[currencyIndex].deposits.push({
+                    id: wallet.balances[currencyIndex].deposits.length + 1,
+                    amount,
+                    date: formatDate(new Date()),
+                    initialAmount: wallet.balances[currencyIndex].amount,
+                    finalAmount: wallet.balances[currencyIndex].amount + amount
+                });
+                wallet.balances[currencyIndex].amount += amount;
+                resolve(wallet);
+            }}
     });
 };
 
 export const withdraw: WithdrawMethod = (walletId: number, amount: number, currency: Currency): Promise<Wallet> => {
     return new Promise((resolve, reject) => {
         const wallet = DB.wallets.entities.find(w => w.id === walletId);
-        setTimeout(() => {
-            if (!wallet) reject(new ErrorWithStatus(404, 'wallet not found'));
+        if (!wallet) reject(new ErrorWithStatus(404, 'Wallet not found'));
+        else {
+            const currencyIndex = wallet.balances.findIndex(b => b.currency.id === currency.id);
+            if (currencyIndex === -1) reject(new ErrorWithStatus(404, 'Balance not found'));
             else {
-                const currencyIndex = wallet.balances.findIndex(b => b.currency.id === currency.id);
-                if (currencyIndex === -1) reject(new ErrorWithStatus(404, 'Balance not found'));
-                else {
-                    wallet.balances[currencyIndex].withdrawal.push({
-                        id: wallet.balances[currencyIndex].withdrawal.length + 1,
-                        amount,
-                        date: formatDate(new Date()),
-                        initialAmount: wallet.balances[currencyIndex].amount,
-                        finalAmount: wallet.balances[currencyIndex].amount - amount
-                    });
-                    wallet.balances[currencyIndex].amount -= amount;
-                }
-                resolve(wallet);
+                wallet.balances[currencyIndex].withdrawal.push({
+                    id: wallet.balances[currencyIndex].withdrawal.length + 1,
+                    amount,
+                    date: formatDate(new Date()),
+                    initialAmount: wallet.balances[currencyIndex].amount,
+                    finalAmount: wallet.balances[currencyIndex].amount - amount
+                });
+                wallet.balances[currencyIndex].amount -= amount;
             }
-        });
+            resolve(wallet);
+        }
     });
 };
 
 export const addBalance = (walletId: number, balance: Balance): Promise<Wallet> => {
     return new Promise((resolve, reject) => {
         const wallet = DB.wallets.entities.find(w => w.id === walletId);
-        setTimeout(() => {
-            if (!wallet) reject(new ErrorWithStatus(404, 'wWllet not found'));
-            else {
-                wallet.balances.push(balance);
-                resolve(wallet);
-            }
-        });
+        if (!wallet) reject(new ErrorWithStatus(404, 'Wallet not found'));
+        else {
+            wallet.balances.push(balance);
+            resolve(wallet);
+        }
     });
 };

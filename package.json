@@ -4,11 +4,11 @@
   "description": "",
   "main": "App.js",
   "scripts": {
-    "test": "tsc && NODE_ENV=testing jest ./.dist",
+    "test": "tsc && jest ./.dist",
     "jest": "jest --help",
     "dev": "npm run build && npm run start",
     "build": "tsc",
-    "start": "NODE_ENV=development node -r ./tsconfig-paths-bootstrap.js ./.dist/App.js"
+    "start": "node -r ./tsconfig-paths-bootstrap.js ./.dist/App.js"
   },
   "author": "Lucas María",
   "license": "ISC",
