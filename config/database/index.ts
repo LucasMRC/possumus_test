@@ -11,7 +11,10 @@ import {
     AddBalanceMethod,
     createCurrency,
     CreateMethod,
-    createUser
+    createUser,
+    FindAllMethod,
+    findAllUsers,
+    findAllCurrencies
 } from '@config/database/methods';
 
 // Modules
@@ -25,12 +28,14 @@ interface DBI {
         deposit: DepositMethod;
         withdraw: WithdrawMethod;
         addBalance: AddBalanceMethod;
-        create: CreateMethod<User>
+        create: CreateMethod<User>;
+        findAll: FindAllMethod<User>;
     }
     currencies: {
         entities: Currency[];
         findOne: FindMethod<Currency>;
-        create: CreateMethod<Currency>
+        create: CreateMethod<Currency>,
+        findAll: FindAllMethod<Currency>;
     }
 }
 
@@ -41,8 +46,8 @@ export const DB: DBI = {
         create: createUser,
         deposit,
         withdraw,
-        addBalance
-
+        addBalance,
+        findAll: findAllUsers
     },
     currencies: {
         entities: [
@@ -60,6 +65,7 @@ export const DB: DBI = {
             }
         ],
         findOne: findOneCurrency,
-        create: createCurrency
+        create: createCurrency,
+        findAll: findAllCurrencies
     }
 };

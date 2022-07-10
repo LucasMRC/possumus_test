@@ -5,12 +5,15 @@ import {
     depositCurrency,
     getUser,
     withdrawCurrency,
-    createUser
+    createUser,
+    getAll
 } from '@modules/user';
 
 const UserRoutes = Router();
 
 UserRoutes.get('/:id', getUser);
+
+UserRoutes.get('/', getAll);
 
 UserRoutes.post('/:id/deposit', depositCurrency);
 

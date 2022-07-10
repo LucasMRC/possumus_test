@@ -16,6 +16,17 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
     }
 };
 
+export const getAll = async (req: Request, res: Response, next: NextFunction) => {
+    const userService = container.resolve(UserService);
+
+    try {
+        const users = await userService.getAll();
+        res.json(users);
+    } catch(ex: unknown) {
+        next(ex);
+    }
+};
+
 export const depositCurrency = async (req: Request, res: Response, next: NextFunction) => {
     const deposit = req.body;
     const userId = req.params.id;

@@ -14,6 +14,7 @@ export type CreateMethod<T> = (entity: T) => Promise<T>;
 export type DepositMethod = (userId: number, amount: number, currency: Currency) => Promise<User>;
 export type WithdrawMethod = (userId: number, amount: number, currency: Currency) => Promise<User>;
 export type AddBalanceMethod = (userId: number, balance: Balance) => Promise<User>;
+export type FindAllMethod<T> = () => Promise<T[]>;
 
 export interface FindOneOptions {
     property: string;
@@ -36,6 +37,14 @@ export const findOneUser: FindMethod<User> = (options: FindOneOptions): Promise<
         setTimeout(() => {
             if (!user) resolve(undefined);
             else resolve(user);
+        }, 1500);
+    });
+};
+
+export const findAllUsers: FindAllMethod<User> = (): Promise<User[]> => {
+    return new Promise((resolve, _reject) => {
+        setTimeout(() => {
+            resolve(DB.users.entities);
         }, 1500);
     });
 };
@@ -129,6 +138,14 @@ export const findOneCurrency: FindMethod<Currency> = (options: FindOneOptions): 
         setTimeout(() => {
             if (!currency) resolve(undefined);
             else resolve(currency);
+        }, 1500);
+    });
+};
+
+export const findAllCurrencies: FindAllMethod<Currency> = (): Promise<Currency[]> => {
+    return new Promise((resolve, _reject) => {
+        setTimeout(() => {
+            resolve(DB.currencies.entities);
         }, 1500);
     });
 };

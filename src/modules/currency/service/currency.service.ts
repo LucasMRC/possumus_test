@@ -20,6 +20,10 @@ export class CurrencyService {
         return await this.findByProperty('id', id);
     };
 
+    getAll = async (): Promise<Currency[]> => {
+        return await this.currencyRepository.findAll();
+    };
+
     create = async (dto: CurrencyDTO): Promise<Currency> => {
         const newCurrency = new Currency(dto.name);
 

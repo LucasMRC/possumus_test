@@ -14,6 +14,10 @@ export class CurrencyRepository {
         return await DB.currencies.findOne(options);
     };
 
+    findAll = async (): Promise<Currency[]> => {
+        return await DB.currencies.findAll();
+    };
+
     create = async (currency: Currency): Promise<Currency> => {
         return await DB.currencies.create(currency);
     };

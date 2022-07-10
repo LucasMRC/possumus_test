@@ -15,6 +15,10 @@ export class UserRepository {
         return await DB.users.findOne(options);
     };
 
+    findAll = async (): Promise<User[]> => {
+        return await DB.users.findAll();
+    };
+
     create = async (user: User): Promise<User> => {
         return await DB.users.create(user);
     };

@@ -1,11 +1,13 @@
 import { Router } from 'express';
 
 // Modules
-import { getCurrency, createCurrency } from '@modules/currency';
+import { getCurrency, createCurrency, getAll } from '@modules/currency';
 
 const CurrencyRoutes = Router();
 
 CurrencyRoutes.get('/:id', getCurrency);
+
+CurrencyRoutes.get('/', getAll);
 
 CurrencyRoutes.post('/', createCurrency);
 
