@@ -6,6 +6,7 @@ import { Balance, User } from '@modules/user';
 import { Currency } from '@modules/currency';
 
 // Utils
+import { formatDate } from '@utils/formatters';
 import { ErrorWithStatus } from '@utils/errors';
 
 // Types & Interfaces
@@ -61,7 +62,7 @@ export const deposit: DepositMethod = (userId: number, amount: number, currency:
                     user.balance[currencyIndex].deposits.push({
                         id: user.balance[currencyIndex].deposits.length + 1,
                         amount,
-                        date: new Date(),
+                        date: formatDate(new Date()),
                         initialAmount: user.balance[currencyIndex].amount,
                         finalAmount: user.balance[currencyIndex].amount + amount
                     });
@@ -84,7 +85,7 @@ export const withdraw: WithdrawMethod = (userId: number, amount: number, currenc
                     user.balance[currencyIndex].withdrawal.push({
                         id: user.balance[currencyIndex].withdrawal.length + 1,
                         amount,
-                        date: new Date(),
+                        date: formatDate(new Date()),
                         initialAmount: user.balance[currencyIndex].amount,
                         finalAmount: user.balance[currencyIndex].amount - amount
                     });

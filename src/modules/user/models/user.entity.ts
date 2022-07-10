@@ -1,4 +1,8 @@
+// Modules
 import { Currency } from '@modules/currency';
+
+// Utils
+import { formatDate } from '@src/utils';
 
 export class Balance {
     constructor(currency: Currency, amount: number) {
@@ -8,7 +12,7 @@ export class Balance {
             {
                 id: 1,
                 amount,
-                date: new Date(),
+                date: formatDate(new Date()),
                 initialAmount: 0,
                 finalAmount: amount
             }
@@ -24,7 +28,7 @@ export class Balance {
 export interface Movement {
     id: number;
     amount: number;
-    date: Date;
+    date: string;
     initialAmount: number;
     finalAmount: number;
 }
