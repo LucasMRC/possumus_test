@@ -152,6 +152,8 @@ export const findAllCurrencies: FindAllMethod<Currency> = (): Promise<Currency[]
 
 export const createCurrency: CreateMethod<Currency> = (currency: Currency): Promise<Currency> => {
     return new Promise((resolve, reject) => {
+        // Currency names will be saved in lowercase
+        currency.name = currency.name.toLowerCase();
         const currencyIndex = DB.currencies.entities.findIndex(c => c.name === currency.name);
         if (currencyIndex !== -1) reject(new ErrorWithStatus(409, 'Currency already exists'));
         else {
