@@ -54,7 +54,7 @@ export const findAllUsers: FindAllMethod<User> = (): Promise<User[]> => {
 
 export const createUser: CreateMethod<User> = (user: User): Promise<User> => {
     return new Promise((resolve, reject) => {
-        const userIndex = DB.users.entities.findIndex(c => c.name === user.name);
+        const userIndex = DB.users.entities.findIndex(c => c.name === user.name || c.email === user.email);
         if (userIndex !== -1) reject(new ErrorWithStatus(409, 'User already exists'));
         else {
             user.id = DB.users.entities.length + 1;

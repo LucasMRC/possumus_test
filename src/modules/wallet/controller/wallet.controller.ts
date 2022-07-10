@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { container } from 'tsyringe';
 
 // Modules
-import { WalletDTO, WalletService } from '@modules/wallet';
+import { WalletDTO, WalletService, MovementDTO } from '@modules/wallet';
 
 export const getWallet = async (req: Request, res: Response, next: NextFunction) => {
     const walletId = req.params.id;
@@ -33,7 +33,8 @@ export const depositCurrency = async (req: Request, res: Response, next: NextFun
     const walletService = container.resolve(WalletService);
 
     try {
-        const wallet = await walletService.depositCurrency(Number(walletId), deposit.amount, deposit.currencyId);
+        const dto = new MovementDTO(Number(walletId), deposit.amount, deposit.currencyId);
+        const wallet = await walletService.depositCurrency(dto);
         res.json(wallet);
     } catch(ex: unknown) {
         next(ex);
@@ -46,7 +47,8 @@ export const withdrawCurrency = async (req: Request, res: Response, next: NextFu
     const walletService = container.resolve(WalletService);
 
     try {
-        const wallet = await walletService.withdrawCurrency(Number(walletId), withdraw.amount, withdraw.currencyId);
+        const dto = new MovementDTO(Number(walletId), withdraw.amount, withdraw.currencyId);
+        const wallet = await walletService.withdrawCurrency(dto);
         res.json(wallet);
     } catch(ex: unknown) {
         next(ex);
@@ -54,10 +56,10 @@ export const withdrawCurrency = async (req: Request, res: Response, next: NextFu
 };
 
 export const createWallet = async (req: Request, res: Response, next: NextFunction) => {
-    const dto: WalletDTO = req.body;
     const walletService = container.resolve(WalletService);
 
     try {
+        const dto: WalletDTO = new WalletDTO(req.body);
         const wallet = await walletService.create(dto);
         res.json(wallet);
     } catch(ex: unknown) {

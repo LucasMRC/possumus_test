@@ -28,10 +28,10 @@ export const getAll = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 export const createCurrency = async (req: Request, res: Response, next: NextFunction) => {
-    const dto: CurrencyDTO = req.body;
     const currencyService = container.resolve(CurrencyService);
 
     try {
+        const dto: CurrencyDTO = new CurrencyDTO(req.body);
         const currency = await currencyService.create(dto);
         res.json(currency);
     } catch(ex: unknown) {

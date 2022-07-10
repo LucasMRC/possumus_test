@@ -11,7 +11,7 @@ test('Create users', async () => {
     expect(emptyUsers.length).toBe(0);
 
     // Create new user
-    const newUser = new User('Tomás');
+    const newUser = new User('Tomás', 'tomas@possumus.io');
     await userService.create(newUser);
 
     const oneUser = await userService.getAll();
@@ -19,7 +19,7 @@ test('Create users', async () => {
     expect(oneUser[0].name).toBe('Tomás');
 
     // Create aother user
-    const anotherUser = new User('Lucas');
+    const anotherUser = new User('Lucas', 'lucas@possumus.io');
     await userService.create(anotherUser);
 
     const twoUsers = await userService.getAll();

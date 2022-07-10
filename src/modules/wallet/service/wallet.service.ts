@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe';
 import { ErrorWithStatus } from '@utils/errors';
 
 // Modules
-import { Wallet, Balance, WalletDTO } from '@modules/wallet';
+import { Wallet, Balance, WalletDTO, MovementDTO } from '@modules/wallet';
 import { CurrencyService } from '@modules/currency';
 import { WalletRepository } from '../repository/wallet.repository';
 import { UserService } from '@modules/user';
@@ -48,7 +48,8 @@ export class WalletService {
         return await this.walletRepository.create(newWallet);
     };
 
-    depositCurrency = async (walletId: number, amount: number, currencyId: number): Promise<Wallet> => {
+    depositCurrency = async (dto: MovementDTO): Promise<Wallet> => {
+        const { walletId, amount, currencyId } = dto;
         const wallet = await this.findById(walletId);
         if (!wallet) throw new ErrorWithStatus(404, `Wallet with id ${walletId} not found`);
 
@@ -62,7 +63,8 @@ export class WalletService {
         }
     };
 
-    withdrawCurrency = async (walletId: number, amount: number, currencyId: number): Promise<Wallet> => {
+    withdrawCurrency = async (dto: MovementDTO): Promise<Wallet> => {
+        const { walletId, amount, currencyId } = dto;
         const wallet = await this.findById(walletId);
         if (!wallet) throw new ErrorWithStatus(404, `Wallet with id ${walletId} not found`);
 

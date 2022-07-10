@@ -28,10 +28,10 @@ export const getAll = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
-    const dto: UserDTO = req.body;
     const userService = container.resolve(UserService);
 
     try {
+        const dto: UserDTO = new UserDTO(req.body);
         const user = await userService.create(dto);
         res.json(user);
     } catch(ex: unknown) {

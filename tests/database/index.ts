@@ -68,7 +68,7 @@ export const DB: DBI = {
             },
             {
                 id: 3,
-                name: 'USDT'
+                name: 'usdt'
             }
         ],
         findOne: findOneCurrency,
